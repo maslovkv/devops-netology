@@ -1,0 +1,23 @@
+[servers]
+
+%{~ for i in webservers ~}
+%{ if "${i["network_interface"][0]["nat"]}" != false }
+${i["name"]}   ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{ else }
+${i["name"]}   ansible_host=${i["network_interface"][0]["ip_address"]}
+%{ endif}
+%{~ endfor ~}
+%{~ for i in nodes ~}
+%{ if "${i["network_interface"][0]["nat"]}" != false }
+${i["name"]}   ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{ else }
+${i["name"]}   ansible_host=${i["network_interface"][0]["ip_address"]}
+%{ endif}
+%{~ endfor ~}
+%{~ for i in task3 ~}
+  %{ if "${i["network_interface"][0]["nat"]}" != false }
+${i["name"]}   ansible_host=${i["network_interface"][0]["nat_ip_address"]}
+%{ else }
+${i["name"]}   ansible_host=${i["network_interface"][0]["ip_address"]}
+%{ endif}
+%{~ endfor ~}
