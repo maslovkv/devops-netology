@@ -2,7 +2,10 @@ terraform {
   required_providers {
     yandex = {
       source = "yandex-cloud/yandex"
+      version = "~> 0.89.0"
     }
+    template = "~> 2.0"
+
   }
   required_version = ">=0.13"
   backend "s3" {
@@ -47,7 +50,8 @@ resource "yandex_vpc_subnet" "develop" {
 */
 
 module "test-vm" {
-  source   = "git::https://github.com/udjin10/yandex_compute_instance.git?ref=main"
+  depends_on = [yandex_vpc_security_group.example]
+  source   = "git::https://github.com/udjin10/yandex_compute_instance?ref=test"
   env_name = "develop"
   # network_id      = yandex_vpc_network.develop.id
   network_id     = module.vpc_dev.vpc_id
@@ -56,8 +60,8 @@ module "test-vm" {
   instance_name  = "web"
   instance_count = 1
   image_family   = "ubuntu-2004-lts"
-  public_ip      = true
-
+  public_ip      = false
+  security_group_ids = [yandex_vpc_security_group.example.id]
   metadata = {
     user-data          = data.template_file.cloudinit.rendered #Для демонстрации №3
     serial-port-enable = 1
@@ -70,6 +74,7 @@ module "test-vm" {
 #Пример передачи cloud-config в ВМ для демонстрации №3
 data "template_file" "cloudinit" {
   template = file("./cloud-init.yml")
+
   vars = {
     username       = var.username
     ssh_public_key = file(var.ssh_public_key)
