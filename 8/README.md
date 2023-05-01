@@ -12,7 +12,7 @@
 
 1. [Введение в Ansible](./01).
 
-2. [Работа с Playbook](./08-ansible-02-playbook).
+2. [Работа с Playbook](./02).
 
 3. [Использование Yandex Cloud](./08-ansible-03-yandex).
 
