@@ -18,7 +18,7 @@
 
 ### Install Vector.
 
-### [Переменные](group_vars/vector/vars.yml)
+#### [Переменные](group_vars/vector/vars.yml)
 
 Определяют следующие параметры vector:
 * версию
