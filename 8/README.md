@@ -14,7 +14,7 @@
 
 2. [Работа с Playbook](./02).
 
-3. [Использование Yandex Cloud](./08-ansible-03-yandex).
+3. [Использование Yandex Cloud](./03).
 
 4. [Работа с Roles](./08-ansible-04-role).
 
