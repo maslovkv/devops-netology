@@ -16,7 +16,7 @@
 
 3. [Использование Yandex Cloud](./03).
 
-4. [Работа с Roles](./08-ansible-04-role).
+4. [Работа с Roles](./04).
 
 5. [Тестирование Roles](./08-ansible-05-testing).
 
