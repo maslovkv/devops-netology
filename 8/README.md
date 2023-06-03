@@ -26,9 +26,9 @@
 
 7. [Жизненный цикл ПО](../9/01/README.md).
 
-8. [DevOps и SRE](./09-ci-02-devops/README.md).
+8. [DevOps и SRE](../9/02/README.md).
 
-9. [Процессы CI/CD](./09-ci-03-cicd/README.md).
+9. [Процессы CI/CD](../9/03/README.md).
 
 10. [Jenkins](./09-ci-04-jenkins/README.md).
 
