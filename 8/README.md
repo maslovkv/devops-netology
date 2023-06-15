@@ -51,5 +51,5 @@
 
 ## Дополнительные материалы к лекциям
 
-1. [Дополнительные материалы к лекциям по Ansible](./08-ansible-additional).
-1. [Дополнительные материалы к лекциям по CI\CD](./09-ci-additional).
+1. [Дополнительные материалы к лекциям по Ansible](https://github.com/netology-code/mnt-homeworks/tree/MNT-video/08-ansible-additional).
+1. [Дополнительные материалы к лекциям по CI\CD](https://github.com/netology-code/mnt-homeworks/blob/MNT-video/09-ci-additional/README.md).
