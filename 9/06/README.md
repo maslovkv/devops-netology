@@ -59,6 +59,7 @@
 - Dockerfile; 
 - лог успешного выполнения пайплайна;
 - решённый Issue.
+
 [Репозиторий](https://gitlab.com/maslovkv/nelology-python-api)
 
 ### Важно 
