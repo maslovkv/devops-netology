@@ -1,0 +1,74 @@
+version: '3.6'
+
+networks:
+  gitlab:
+    driver: bridge
+
+services:
+  gitlab:
+    image: gitlab/gitlab-ce:latest
+    container_name: gitlab
+    hostname: gitlab
+    volumes:
+      - /opt/docker/gitlab/config:/etc/gitlab
+      - /opt/docker/gitlab/logs:/var/log/gitlab
+      - /opt/docker/gitlab/data:/var/opt/gitlab
+      - /opt/docker/gitlab/registry:/var/opt/gitlab/registry
+    restart: always
+    networks:
+      - gitlab
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab'
+        gitlab_rails['gitlab_shell_ssh_port'] = 228
+        letsencrypt['enable'] = false
+        nginx['ssl_certificate'] = "/etc/gitlab/gitlab.crt"
+        nginx['ssl_certificate_key'] = "/etc/gitlab/gitlab.key"
+        gitlab_rails['gitlab_default_projects_features_container_registry'] = true
+        registry_external_url 'https://gitlab:5005'
+        gitlab_rails['registry_enabled'] = true
+        gitlab_rails['registry_host'] = "gitlab"
+        gitlab_rails['registry_port'] = "5005"
+        gitlab_rails['registry_path'] = "/var/opt/gitlab/registry"
+        registry_nginx['ssl_certificate'] = "/etc/gitlab/gitlab.crt"
+        registry_nginx['ssl_certificate_key'] = "/etc/gitlab/gitlab.key"
+
+    ports:
+      - '80:80'
+      - '443:443'
+      - '228:22'
+      - '5005:5005'
+    shm_size: '256m'
+    labels:
+      org.label-schema.group: "gitlab"
+
+  gitlab-runner:
+    image: gitlab/gitlab-runner:latest
+    container_name: gitlab-runner
+    hostname: gitlab-runner
+    volumes:
+      - /opt/docker/gitlab-runner/config:/etc/gitlab-runner
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: always
+    environment:
+      - TZ=Europe/Moscow
+      - GIT_SSL_NO_VERIFY=1
+    networks:
+      - gitlab
+    labels:
+      org.label-schema.group: "gitlab"
+
+  python-api:
+    image: registry.gitlab.com/maslovkv/nelology-python-api:latest
+    container_name: python-api
+    hostname: python-api
+    restart: always
+    ports:
+      - '5290:5290'
+    environment:
+      - TZ=Europe/Moscow
+      - GIT_SSL_NO_VERIFY=1
+    networks:
+      - gitlab
+    labels:
+      org.label-schema.group: "gitlab"
