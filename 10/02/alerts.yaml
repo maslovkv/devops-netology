@@ -1,0 +1,573 @@
+apiVersion: 1
+groups:
+    - orgId: 1
+      name: all
+      folder: General Alerting
+      interval: 1m
+      rules:
+        - uid: c28accda-84fa-48c0-a005-7e81888fb536
+          title: Memory
+          condition: E
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                exemplar: true
+                expr: avg(node_memory_MemFree_bytes{instance="nodeexporter:9100", job="nodeexporter"})/(1024^2)
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: RAM free
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: avg(node_memory_MemAvailable_bytes{instance="nodeexporter:9100", job="nodeexporter"})/(1024^2)
+                hide: false
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: MemAvial
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                exemplar: false
+                expr: avg(node_memory_MemTotal_bytes{instance="nodeexporter:9100", job="nodeexporter"}) / ( 1024^2)
+                hide: false
+                instant: true
+                interval: ""
+                intervalMs: 15000
+                legendFormat: MemTotal
+                maxDataPoints: 43200
+                range: false
+                refId: C
+            - refId: D
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: D
+                settings:
+                    mode: ""
+                type: reduce
+            - refId: E
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 1024
+                            - 0
+                        type: lt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: D
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: E
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 6
+          noDataState: Alerting
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "6"
+          isPaused: false
+        - uid: ac740cbd-34d3-453f-a93d-a14b27879a37
+          title: CPU utilization
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: 100 - avg by(instance) (irate(node_cpu_seconds_total{job="nodeexporter", ode="idle"}[15s])) * 100
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: CPU_Util
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 79
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 5
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "5"
+          isPaused: false
+        - uid: f35a089e-3655-44fd-bf6d-ef6e983e6998
+          title: Root FS Used
+          condition: D
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: 100-((node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"})
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: Free
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: 100-(100-((node_filesystem_avail_bytes{mountpoint="/",fstype!="rootfs"} * 100) / node_filesystem_size_bytes{mountpoint="/",fstype!="rootfs"}))
+                hide: false
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                legendFormat: Used
+                maxDataPoints: 43200
+                range: true
+                refId: B
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: C
+                settings:
+                    mode: ""
+                type: reduce
+            - refId: D
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 90
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - D
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: C
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: D
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 7
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "7"
+          isPaused: false
+        - uid: d632f4c0-b58e-41fe-8a48-675e94dab8a7
+          title: CPUla1
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                exemplar: false
+                expr: avg by (instance)(rate(node_load1{}[$__rate_interval]))
+                hide: false
+                instant: true
+                interval: ""
+                intervalMs: 15000
+                maxDataPoints: 43200
+                range: false
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.99
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 2
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "2"
+          isPaused: false
+        - uid: e1b8a2e8-3fa9-4c3c-b136-1739aec3e00f
+          title: CPUla5
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: avg by (instance)(rate(node_load5{}[$__rate_interval]))
+                hide: false
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.99
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 3
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "3"
+          isPaused: false
+        - uid: b0b8876e-8197-449a-86a2-e36de77004c4
+          title: CPUla15
+          condition: C
+          data:
+            - refId: A
+              relativeTimeRange:
+                from: 3600
+                to: 0
+              datasourceUid: 3gNBCr9Vz
+              model:
+                datasource:
+                    type: prometheus
+                    uid: 3gNBCr9Vz
+                editorMode: code
+                expr: avg by (instance)(rate(node_load15{}[$__rate_interval]))
+                hide: false
+                instant: false
+                interval: ""
+                intervalMs: 15000
+                maxDataPoints: 43200
+                range: true
+                refId: A
+            - refId: B
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params: []
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - B
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: B
+                type: reduce
+            - refId: C
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0.99
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: B
+                hide: false
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          dashboardUid: ac7e62c8-2188-46db-a450-2193a76c639f
+          panelId: 4
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            __dashboardUid__: ac7e62c8-2188-46db-a450-2193a76c639f
+            __panelId__: "4"
+          isPaused: false
