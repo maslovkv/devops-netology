@@ -77,3 +77,5 @@
 1. [Администрирование баз данных](https://github.com/netology-code/virt-homeworks/blob/virt-11/additional/README.md)
 
 # [Домашние задания по курсу «CI, мониторинг и управление конфигурациями»](8/README.md)
+
+# [Домашние задания по теме «Микросервисная архитектура»](11/README.md)
