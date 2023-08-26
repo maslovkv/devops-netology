@@ -15,6 +15,23 @@
 
 Обоснуйте свой выбор.
 
+| Gateway                                             | Маршрутизация запросов  |  Аутентификация в запросах  |  HTTPS  |   
+|:----------------------------------------------------|:-----------------------:|:---------------------------:|:-------:|
+| [WSO2 API Manager](https://wso2.com/api-manager/)   |            +            |              +              |    +    |
+| [Apache APISIX Gateway](https://apisix.apache.org/) |            +            |              +              |    +    |
+| [Kong](https://konghq.com/products/kong-gateway)    |            +            |              +              |    +    |
+| [Gravitee.io](https://www.gravitee.io/)             |            +            |              +              |    +    |
+| [KrakenD](https://www.krakend.io)                   |            +            |              +              |    +    |
+| [NGINX](https://www.nginx.com)                      |            +            |              +              |    +    |
+| [HAProxy](https://www.haproxy.com/)                 |            +            |              +              |    +    |
+
+Это далеко не все продукты, которые можно использовать в качестве API Gateway.
+У большинства облачных провайдеров есть свои реализации.
+Выбор должен быть основан на знании возможностей и ограничений продукта, а также функциональных тестов.
+На текущий момент, я бы выбрал nginx или haproxy, как наиболее часто применяемые в качестве reverse-proxy и балансировщиков нагрузки.
+
+
+
 ## Задача 2: Брокер сообщений
 
 Составьте таблицу возможностей различных брокеров сообщений. На основе таблицы сделайте обоснованный выбор решения.
@@ -28,6 +45,25 @@
 - простота эксплуатации.
 
 Обоснуйте свой выбор.
+
+| Брокер сообщений                                                           | Кластер | Хранение сообщений на диске |               Высокая скорость               | Форматы | Разделение прав | Простота |    
+|:---------------------------------------------------------------------------|:-------:|:---------------------------:|:--------------------------------------------:|:-------:|:---------------:|:--------:|
+| [Memphis](https://github.com/memphisdev/memphis)                           |    +    |              +              | 300K messages per second per station (queue) |    +    |        +        |    +     |
+| [RabbitMQ](https://www.rabbitmq.com)                                       |    +    |              +              |          4K-10K messages per second          |    +    |        +        |    +     |
+| [Apache Kafka](https://kafka.apache.org/)                                  |    +    |              +              |             2 million per second             |    +    |        +        |   +/-    |
+| [Apache ActiveMQ Artemis](https://activemq.apache.org/components/artemis/) |    +    |              +              |         10K-40K messages per second          |    +    |        +        |    +     |
+| [ZeroMQ](https://zeromq.org/)                                              |    -    |              -              |         66-70K messages per second           |    +    |        -        |    -     |
+
+Исходя из данных таблицы подойдет Memphis. 
+
+
+<details><summary></summary>
+
+https://toadmin.ru/6-лучших-брокеров-сообщений-для-соврем/
+
+https://softwaremill.com/mqperf/
+
+</details>
 
 ## Задача 3: API Gateway * (необязательная)
 
