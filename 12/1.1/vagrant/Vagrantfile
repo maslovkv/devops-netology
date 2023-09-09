@@ -1,0 +1,46 @@
+ISO = "bento/ubuntu-20.04"
+NET = "192.168.56."
+INVENTORY_PATH = "./inventory"
+PLAYBOOK = "./provision.yml"
+
+servers = [
+  {
+    :hostname => "MicroK8S",
+    :ip => NET + "12",
+    :ssh_host => "20012",
+    :ssh_vm => "22",
+    :ram => 4096,
+    :core => 4
+  },
+
+]
+
+Vagrant.configure(2) do |config|
+  config.vm.synced_folder ".", "/vagrant", disabled: false
+  servers.each do |machine|
+    config.vm.define machine[:hostname] do |node|
+      node.vm.box = ISO
+      node.vm.hostname = machine[:hostname]
+      node.vm.network "private_network", ip: machine[:ip]
+      node.vm.network :forwarded_port, guest: machine[:ssh_vm], host: machine[:ssh_host]
+      node.vm.provider "virtualbox" do |vb|
+        vb.customize ["modifyvm", :id, "--memory", machine[:ram]]
+        vb.customize ["modifyvm", :id, "--cpus", machine[:core]]
+        vb.name = machine[:hostname]
+      end
+       node.vm.provision "ansible" do |setup|
+        setup.inventory_path = INVENTORY_PATH
+        setup.playbook = PLAYBOOK
+        setup.become = true
+        setup.extra_vars = { ansible_user: 'vagrant' }
+       end
+       node.vm.provision "shell" do |s|
+        ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+        s.inline = <<-SHELL
+          echo #{ssh_pub_key} >> /home/vagrant/.ssh/authorized_keys
+          echo #{ssh_pub_key} >> /root/.ssh/authorized_keys
+        SHELL
+      end
+    end
+  end
+end

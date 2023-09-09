@@ -1,0 +1,8 @@
+---
+MicroK8Ss:
+  hosts:
+    MicroK8S:
+      ansible_connection: ssh
+      ansible_host: 127.0.0.1
+      ansible_port: 20012
+      ansible_user: vagrant
