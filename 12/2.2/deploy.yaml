@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hw-12-2-2-1
+  labels:
+    app: pvc-vol
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pvc-vol
+  template:
+    metadata:
+      labels:
+        app: pvc-vol
+    spec:
+      containers:
+      - name: busybox
+        image: busybox
+        command: ['sh', '-c', 'while true; do date | tee -a /output/date.log; sleep 5; done;']
+        volumeMounts:
+        - name: vol
+          mountPath: /output
+      - name: multitool
+        image: wbitt/network-multitool
+        volumeMounts:
+        - name: vol
+          mountPath: /input
+      volumes:
+      - name: vol
+        persistentVolumeClaim:
+          claimName: pvc-vol
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: pvc-vol
+spec:
+  storageClassName: ""
+  volumeMode: Filesystem
+  accessModes:
+    - ReadWriteOncePod
+  resources:
+    requests:
+      storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: pv1
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOncePod
+  hostPath:
+    path: /srv/pv1
