@@ -1,0 +1,92 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mtt-configmap
+data:
+ HTTP_PORT: "8080"
+ HTTPS_PORT: "8443"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-configmap
+data:
+   index.html: |
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <title>HTML Document Template</title>
+    </head>
+    <body>
+    <p>Самая простая страница.</p>
+    <script>
+    console.log(document.querySelector('p').textContent);
+    </script>
+    </body>
+    </html>
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-deployment
+  labels:
+    app: nginx
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx
+  template:
+    metadata:
+      labels:
+        app: nginx
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:latest
+        ports:
+        - containerPort: 80
+          name: nginx-http
+        volumeMounts:
+        - name: nginx-configmap-vol
+          mountPath: /usr/share/nginx/html
+      - name: multitool
+        image: wbitt/network-multitool
+        env:
+          - name: HTTP_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: mtt-configmap
+                key: HTTP_PORT
+          - name: HTTPS_PORT
+            valueFrom:
+              configMapKeyRef:
+                name: mtt-configmap
+                key: HTTPS_PORT
+        ports:
+        - containerPort: 8080
+          name: mtool-http
+      volumes:
+      - name: nginx-configmap-vol
+        configMap:
+          name: nginx-configmap
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hw-12-2-3
+spec:
+  selector:
+    app: nginx
+  ports:
+  - name: svc-nginx-http
+    protocol: TCP
+    port: 9001
+    targetPort: nginx-http
+  - name: svc-mtool-http
+    protocol: TCP
+    port: 9002
+    targetPort: mtool-http
+
