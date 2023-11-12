@@ -1,0 +1,148 @@
+---
+- name: 'Playbook'
+  hosts: nodes
+  become: yes
+  become_user: root
+  remote_user: vagrant
+
+  tasks:
+    - name: Installing tools
+      apt:
+        package: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - gpg
+        - bash-completion
+    - name: Create directory for ssh-keys
+      file: state=directory mode=0755 dest=/etc/apt/keyrings
+
+    - name: Add gpg key for K8S
+      apt_key:
+        url: https://pkgs.k8s.io/core:/stable:/v1.28/deb/Release.key
+        keyring: /etc/apt/keyrings/k8s.gpg
+
+
+    - name: Add repository K8S
+      apt_repository:
+        repo: "deb [signed-by=/etc/apt/keyrings/k8s.gpg] https://pkgs.k8s.io/core:/stable:/v1.28/deb/ /"
+        state: present
+        filename: k8s
+        mode: 0600
+
+    - name: Installing K8S tools
+      apt:
+        package: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - kubelet
+        - kubeadm
+        - kubectl
+        - containerd
+    - name: Hold kubeadm
+      dpkg_selections:
+        name: "{{ item }}"
+        selection: hold
+      with_items:
+              - kubelet
+              - kubeadm
+              - kubectl
+              - containerd
+
+    - name: Load modules
+      modprobe:
+        name: br_netfilter
+
+    - name: Add br_netfilter to load at boot time
+      ansible.builtin.lineinfile:
+        path: /etc/modules-load.d/modules.conf
+        line: br_netfilter
+        create: yes
+
+    - name: Set Sysctl on all nodes
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+      with_items:
+        - name: net.ipv4.ip_forward
+          value: 1
+        - name: net.bridge.bridge-nf-call-iptables
+          value: 1
+        - name: net.bridge.bridge-nf-call-ip6tables
+          value: 1
+    - name: Check is swap enable
+      shell: swapon
+      register: swap_present
+      changed_when: false
+      ignore_errors: true
+
+    - name: If swap is enabled - disable it
+      shell: swapoff -a
+      when: swap_present.stdout != ""
+
+    - name: Disable SWAP in fstab
+      replace:
+        path: /etc/fstab
+        regexp: '^([^#].*\s*swap\s*.*)$'
+        replace: '# \1'
+    - name: "Add nodes /etc/hosts"
+      lineinfile:
+        name: /etc/hosts
+        line: "{{ item }}"
+        state: present
+      with_items:
+        - "192.168.56.10 vip vip.netology"
+        - "192.168.56.11 master1 master1.netology"
+        - "192.168.56.12 master2 master1.netology"
+        - "192.168.56.13 master3 master1.netology"
+        - "192.168.56.21 node1 node1.netology"
+        - "192.168.56.22 node2 node2.netology"
+    - name: Set Sysctl on master node(s)
+      when: inventory_hostname in groups['manager']
+      sysctl:
+        name: "{{ item.name }}"
+        value: "{{ item.value }}"
+        state: present
+      with_items:
+        - name: net.ipv4.ip_nonlocal_bind
+          value: 1
+    - name: Installing HA tools
+      when: inventory_hostname in groups['manager']
+      apt:
+        package: "{{ item }}"
+        state: present
+        update_cache: yes
+      with_items:
+        - keepalived
+        - haproxy
+    - name: Copy file with owner and permissions
+      when: inventory_hostname in groups['manager']
+      copy:
+        src: haproxy.cfg
+        dest: /etc/haproxy/haproxy.cfg
+    - name: Copy file with owner and permissions
+      when: inventory_hostname in groups['manager']
+      copy:
+        src: check_api.sh
+        dest: /etc/keepalived/check.sh
+        mode: a+x
+    - name: Copy file with owner and permissions
+      when: inventory_hostname in groups['manager']
+      template:
+        src: keepalived.j2
+        dest: /etc/keepalived/keepalived.conf
+    - name: Enable keepalived and haproxy
+      when: inventory_hostname in groups['manager']
+      systemd:
+        name: "{{ item }}"
+        state: restarted
+        enabled: yes
+      with_items:
+        - keepalived
+        - haproxy
+

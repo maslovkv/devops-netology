@@ -1,0 +1,12 @@
+[nodes:children]
+manager
+worker
+
+[manager]
+master1.netology ansible_host=127.0.0.1 ansible_port=20011 ansible_user=vagrant
+
+[worker]
+node1.netology ansible_host=127.0.0.1 ansible_port=20021 ansible_user=vagrant
+node2.netology ansible_host=127.0.0.1 ansible_port=20022 ansible_user=vagrant
+node3.netology ansible_host=127.0.0.1 ansible_port=20023 ansible_user=vagrant
+node4.netology ansible_host=127.0.0.1 ansible_port=20024 ansible_user=vagrant
