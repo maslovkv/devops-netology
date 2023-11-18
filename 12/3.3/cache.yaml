@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cache
+  namespace: app
+  labels:
+    app: cache
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: cache
+  template:
+    metadata:
+      labels:
+        app: cache
+    spec:
+      containers:
+      - name: multitool
+        image: wbitt/network-multitool
+        ports:
+        - containerPort: 80
+          name: cache-http
+        - containerPort: 443
+          name: cache-https
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cache-svc
+  namespace: app
+spec:
+  selector:
+    app: cache
+  ports:
+  - name: cache-svc-http
+    protocol: TCP
+    port: 80
+    targetPort: cache-http
+  - name: cache-svc-https
+    protocol: TCP
+    port: 443
+    targetPort: cache-https
