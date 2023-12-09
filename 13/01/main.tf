@@ -15,12 +15,12 @@ provider "yandex" {
 }
 
 data "template_file" "cloudinit" {
- template = file("./cloud-init.yml")
- vars = {
-     username           = var.username
-     ssh_public_key     = file(var.ssh_public_key)
-     packages           = jsonencode(var.packages)
-   }
+  template = file("./cloud-init.yml")
+  vars = {
+    username       = var.username
+    ssh_public_key = file(var.ssh_public_key)
+    packages       = jsonencode(var.packages)
+  }
 }
 
 resource "yandex_compute_image" "nat-instance-ubuntu" {
@@ -102,7 +102,7 @@ resource "yandex_compute_instance" "nat-instance" {
   }
 
   metadata = {
-    user-data          = data.template_file.cloudinit.rendered
+    user-data = data.template_file.cloudinit.rendered
   }
 }
 
@@ -135,7 +135,7 @@ resource "yandex_compute_instance" "vm-public" {
   }
 
   metadata = {
-    user-data          = data.template_file.cloudinit.rendered
+    user-data = data.template_file.cloudinit.rendered
   }
 }
 
@@ -186,6 +186,6 @@ resource "yandex_compute_instance" "vm-private" {
   }
 
   metadata = {
-    user-data          = data.template_file.cloudinit.rendered
+    user-data = data.template_file.cloudinit.rendered
   }
 }

@@ -69,5 +69,24 @@ variable "vm_resources" {
     cores         = 2
     memory        = 2
     core_fraction = 20
+    boot_disk_mode = "READ_WRITE"
+    platform_id = "standard-v3"
   }
 }
+variable "sa_name" {
+  type = string
+  default = ""
+}
+variable "bucket" {
+  type = map(any)
+  default = {
+    name = "lamp-bucket-netology-13-02"
+    max_size  = "1073741824"
+    storage_class = "STANDARD"
+    key = "netology.jpeg"
+    file = "netology.jpeg"
+  }
+}
+
+
+#<a href="https://storage.yandexcloud.net/lamp-bucket-netology-13-02/netology.jpeg">Картинка тут</a>
