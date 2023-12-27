@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: default
+  labels:
+    app: frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+        env:
+          - name: PMA_ARBITRARY
+            value: "1"
+        ports:
+        - containerPort: 80
+          name: frontend-http
+        - containerPort: 443
+          name: frontend-https
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: hw-13-04
+spec:
+  selector:
+    app: frontend
+  type: NodePort
+  ports:
+  - name: svc-http
+    protocol: TCP
+    port: 9001
+    targetPort: frontend-http
+    nodePort: 30080
